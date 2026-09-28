@@ -1,145 +1,210 @@
-# Agri-Assist Edge
+# Agri-Assist Edge 🌱
 
-**A locally operating, edge-AI smart farming assistant that combines crop vision, field sensors and environmental data to detect agricultural threats, make irrigation and risk decisions, and deliver actionable farmer advisories.**
+### AI-Powered Smart Irrigation & Crop Health Monitoring System
 
-Team **POTHAR** | Smart India Hackathon 2026 | Problem Statement **SIH26180** (Qualcomm Inc, Hardware, Agriculture)
+Agri-Assist Edge is an edge-AI agricultural monitoring and decision-support prototype that combines crop images, soil moisture, temperature and humidity to generate crop-health and irrigation decisions.
 
-> **Project status:** Under development. Design and documentation phase complete. Prototype build is in progress. See the [Roadmap](#roadmap).
+**Team POTHAR · Smart India Hackathon 2026 · Problem Statement SIH26180**
 
----
+> **Status:** Under development. Hardware integration and AI deployment are in progress.
 
-## Problem
+## System Architecture
 
-Farmers in remote areas lose yield to crop diseases, pests, nutrient problems, poor irrigation timing and extreme weather (drought, heat waves, floods). Most smart-farming tools depend on stable internet and cloud services, which are often unavailable in the field.
+<p align="center">
+  <img src="docs/architecture.png" alt="Agri-Assist Edge Architecture" width="900">
+</p>
 
-## Our solution
+If the architecture image has a different filename in the current repository, either rename it to `architecture.png` or update the path above.
 
-Agri-Assist Edge processes the important intelligence **on the device**, in the field, without needing the cloud for core decisions.
+## What the system does
 
-```
-SENSE  ->  ANALYZE LOCALLY  ->  DECIDE  ->  ACT / ALERT
-```
-
-It turns crop images, sensor readings and weather data into simple decisions:
-
-- Irrigate now / delay irrigation
-- Possible disease detected
-- Pest activity increasing
-- Heat-stress warning
-- Flood-risk alert
-
-## Key features
-
-- **On-device AI inference.** Works offline, cloud is not required for core intelligence
-- **Crop disease detection** from leaf images
-- **Pest detection** with location, class and confidence
-- **Nutrient-deficiency indication** using image plus crop/environment context
-- **Sensor-based irrigation decisions** with automatic pump control
-- **Environmental risk alerts** for drought, heat and excess rain / flood risk
-- **Farmer-friendly advisories** through LCD, mobile/web interface or SMS
-- **Local data storage and dashboard**
-
-## System architecture
-
-```
-                 CROP IMAGE (ESP32-CAM)
-                          |
-              +-----------+-----------+
-              v                       v
-         Disease AI               Pest AI
-              |                       |
-              +-----------+-----------+
-                          v
-                    AI OBSERVATIONS
-                          |
-Field sensors ------------+------------ Weather data
-                          v
-                   DECISION ENGINE
-                          |
-          +---------------+---------------+
-          v               v               v
-     Irrigation      Crop / Pest        Risk
-      Decision        Advisory       Assessment
-          |               |               |
-          +---------------+---------------+
-                          v
-                   FARMER ADVISORY
-```
-
-The AI models produce **observations**. The decision engine combines those observations with sensor and environmental data to produce the final advice. Not every problem is forced into a deep-learning model.
-
-![Agri-Assist Edge architecture](docs/architecture.png)
-
-## Hardware
-
-| Layer | Component |
-|---|---|
-| Soil / environment sensing | Arduino UNO R4 Minima + capacitive soil-moisture sensor + DHT22 (temperature and humidity) |
-| Camera | ESP32-CAM |
-| Edge computer | Raspberry Pi 5-class |
-| AI acceleration | Raspberry Pi AI HAT+ (if required, to be evaluated) |
-| Actuation | 5 V relay module + DC water pump |
-| Farmer interface | 20x4 LCD, mobile/web interface, SMS (phased) |
-
-**Roles**
-
-- **Arduino UNO R4 Minima** reads sensors, drives the relay and pump, and shows status on the LCD
-- **ESP32-CAM** captures crop/leaf images and sends them to the edge computer. It does not run the heavy AI model
-- **Raspberry Pi** handles preprocessing, AI inference, sensor-data processing, risk analysis, the decision engine, local storage and the farmer backend
-
-## AI and decision modules
-
-| Module | Approach | Notes |
-|---|---|---|
-| Disease / crop health | Lightweight CNN (MobileNetV3 / EfficientNet-Lite candidates) | Classification with confidence score |
-| Pest detection | Lightweight YOLO (YOLOv8n / YOLO11n-class candidates) | Object detection. Final version chosen after testing on target hardware and dataset |
-| Nutrient deficiency | Image-based visual assessment + crop/environment context | Framed as an *indication*, not a confirmed diagnosis, until validated |
-| Irrigation | Rule-based engine on soil moisture, temperature, humidity and weather | Outputs Irrigate / Delay / Stop |
-| Environmental risk | Multivariate risk engine | Outputs drought, heat, excess-rain and flood-risk levels |
-
-## Tech stack
-
-- Python (inference, decision engine, backend)
-- TensorFlow Lite / PyTorch / ONNX (edge inference, final choice after benchmarking)
-- Arduino C++ (sensor and pump control)
-- SQLite (local storage)
-- Web dashboard (lightweight)
-
-> Update this list to match what you actually end up using.
-
-## Roadmap
-
-- [x] Problem analysis and solution design
-- [x] System architecture and hardware selection
-- [x] Sensor + relay + pump prototype (Arduino)
-- [ ] ESP32-CAM image capture pipeline
-- [ ] Dataset collection and model training / benchmarking
-- [ ] Edge deployment on Raspberry Pi
-- [ ] Decision engine and risk engine
-- [ ] Farmer interface (LCD, then web / SMS)
-- [ ] Field testing and demo video
+1. The **ESP32-CAM** captures crop/leaf images.
+2. The **Arduino UNO R4 Minima** reads soil moisture, temperature and humidity and handles low-level pump control.
+3. The **Raspberry Pi 5** receives image and sensor data.
+4. The edge-AI pipeline performs image preprocessing and crop-health/disease inference.
+5. The **Decision Engine** combines AI output and sensor conditions.
+6. The Raspberry Pi sends a high-level pump command to the Arduino.
+7. The Arduino drives the relay and water pump.
+8. The LCD provides local feedback to the farmer.
 
 ## Repository structure
 
-```
-agri-assist-edge/
+```text
+Agri-Assist-Edge/
 ├── README.md
-├── docs/            # architecture diagram, flowcharts, project report
-├── hardware/        # components list, circuit diagrams, BOM
-├── firmware/        # Arduino / ESP32 code (coming soon)
-├── edge/            # Raspberry Pi inference + decision engine (coming soon)
-└── models/          # trained models (coming soon)
+├── LICENSE
+├── .gitignore
+├── CONTRIBUTING.md
+├── SECURITY.md
+│
+├── docs/
+│   ├── architecture.md
+│   ├── hardware.md
+│   ├── ai-pipeline.md
+│   ├── decision-engine.md
+│   ├── testing.md
+│   └── architecture.png          # add your existing architecture image
+│
+├── hardware/
+│   ├── arduino/
+│   │   ├── sensor_control.ino
+│   │   └── README.md
+│   └── esp32-cam/
+│       ├── camera_capture.ino
+│       └── README.md
+│
+├── ai/
+│   ├── training/
+│   │   └── README.md
+│   ├── inference/
+│   │   ├── inference.py
+│   │   └── README.md
+│   ├── models/
+│   │   └── .gitkeep
+│   └── dataset/
+│       └── README.md
+│
+├── decision-engine/
+│   ├── decision_engine.py
+│   ├── irrigation.py
+│   └── crop_health.py
+│
+├── backend/
+│   ├── app.py
+│   └── requirements.txt
+│
+└── config/
+    └── example.env
 ```
 
-## Team POTHAR
+## Hardware
 
-- Sankrit Kashyap Saikia (Team Leader)
-- Nandita Saikia
-- Rashmi Priya Dangaria
-- Prachurjya Singh
-- Dhritikamal Das
-- Sarfraz Mazid
+| Component | Qty | Purpose | Approx. cost |
+|---|---:|---|---:|
+| Raspberry Pi 5 4GB | 1 | Edge AI and decision engine | ₹13,400 |
+| Raspberry Pi AI HAT+ 13 TOPS *(optional)* | 1 | AI acceleration | ₹7,500 |
+| Arduino UNO R4 Minima | 1 | Sensor and pump control | ₹2,300 |
+| ESP32-CAM + OV2640 | 1 | Crop image capture | ₹750 |
+| Capacitive soil-moisture sensor | 1 | Soil moisture | ₹120 |
+| DHT22 | 1 | Temperature/humidity | ₹105 |
+| 5V relay module | 1 | Pump switching | ₹45 |
+| DC 3–6V mini pump | 1 | Irrigation | ₹50 |
+| 20x4 I2C LCD | 1 | Local advisory | ₹335 |
+| Supporting parts | - | Wires, breadboard, tubing, etc. | ₹1,500 |
+
+**Estimated base prototype:** ~₹18,600  
+**Estimated prototype with AI HAT+:** ~₹26,100
+
+Prices are planning estimates, not quotations.
+
+## Pin plan
+
+| Device | Arduino connection |
+|---|---|
+| Soil moisture sensor | A0 |
+| DHT22 | D2 |
+| Relay | D7 |
+| 20x4 I2C LCD | SDA/SCL |
+| Raspberry Pi | USB serial |
+
+The pin assignment is provisional and must be updated after final wiring.
+
+## Software stack
+
+- Python
+- OpenCV
+- NumPy
+- PySerial
+- TensorFlow Lite / compatible edge inference runtime
+- Arduino C/C++
+- ESP32 Arduino framework
+- Flask for the local backend/API
+
+## Running the decision engine
+
+From the repository root:
+
+```bash
+python decision-engine/decision_engine.py
+```
+
+Example:
+
+```bash
+python decision-engine/decision_engine.py \
+  --soil-moisture 680 \
+  --temperature 29 \
+  --humidity 70 \
+  --disease-confidence 0.12 \
+  --disease-class healthy
+```
+
+## Running the local backend
+
+```bash
+cd backend
+python -m venv .venv
+```
+
+Windows:
+
+```bash
+.venv\Scripts\activate
+```
+
+Linux/Raspberry Pi:
+
+```bash
+source .venv/bin/activate
+```
+
+Then:
+
+```bash
+pip install -r requirements.txt
+python app.py
+```
+
+The API starts on:
+
+```text
+http://127.0.0.1:5000
+```
+
+## Important power note
+
+The water pump must **not** be powered from an Arduino GPIO pin. The Arduino controls the relay; the pump receives power from a separate, correctly rated supply.
+
+A 3–6V pump must not be connected directly to a 12V adapter. If a 12V source is used, a suitable buck converter is required.
+
+## AI model status
+
+The repository contains the inference interface and decision-engine integration, but the final trained model is intentionally not included until the dataset, model architecture and validation results are finalized.
+
+Do not claim a disease-detection accuracy in documentation until it has been measured on a held-out test set.
+
+## Development status
+
+| Module | Status |
+|---|---|
+| Component selection | ✅ |
+| Soil-moisture sensing | 🔄 |
+| DHT22 integration | 🔄 |
+| Relay + pump control | 🔄 |
+| LCD | 🔄 |
+| ESP32-CAM capture | 🔄 |
+| ESP32-CAM → Raspberry Pi | ⬜ |
+| AI model training | ⬜ |
+| Edge inference | ⬜ |
+| Decision engine | 🟡 Prototype |
+| Arduino ↔ Raspberry Pi | 🟡 Prototype |
+| Full integration | ⬜ |
+| Field testing | ⬜ |
+
+## Disclaimer
+
+Agri-Assist Edge is an academic/prototype system. AI predictions and irrigation decisions require field validation before being used for real agricultural operations.
 
 ## License
 
-MIT License
+MIT License. See [LICENSE](LICENSE).

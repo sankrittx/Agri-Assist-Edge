@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# ML artifacts
+*.h5
+*.keras
+*.onnx
+*.tflite
+*.pt
+*.pth
+*.ckpt
+
+# Datasets
+ai/dataset/train/
+ai/dataset/validation/
+ai/dataset/test/
+
+# Generated files
+*.log
+*.tmp
+*.jpg
+*.jpeg
+*.png
+!docs/architecture.png
