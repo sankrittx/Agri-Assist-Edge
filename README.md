@@ -68,7 +68,7 @@ Field sensors ------------+------------ Weather data
 
 The AI models produce **observations**. The decision engine combines those observations with sensor and environmental data to produce the final advice. Not every problem is forced into a deep-learning model.
 
-> Add your diagram image here: `docs/architecture.png`
+> Add your diagram image here: `![Agri-Assist Edge architecture](docs/architecture.png)`
 
 ## Hardware
 
